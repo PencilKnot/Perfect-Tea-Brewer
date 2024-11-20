@@ -107,10 +107,22 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	// Several code blocks for testing
+
+	// Testing code for buzzer
+	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0)){
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_SET);
+	}
+	else{
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);
+	}
+
 	// Skeleton code for getting temperature
 	DS18B20_resetTemperature();
 	temperature = DS18B20_readTemperature();
-	HAL_Delay(100); // WHY???
+	HAL_Delay(100);
+
+
   }
   /* USER CODE END 3 */
 }
