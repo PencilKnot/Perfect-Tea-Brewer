@@ -1,0 +1,13 @@
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:1020:22:LL_USART_SetBaudRate	2
+../Core/Src/main.c:74:5:main	1
+../Core/Src/main.c:124:6:SystemClock_Config	3
+../Core/Src/main.c:170:13:MX_USART2_UART_Init	2
+../Core/Src/main.c:203:13:MX_USART6_UART_Init	2
+../Core/Src/main.c:236:13:MX_GPIO_Init	1
+../Core/Src/main.c:269:16:DS18B20_reset	2
+../Core/Src/main.c:288:13:DS18B20_write	3
+../Core/Src/main.c:299:16:DS18B20_readBit	1
+../Core/Src/main.c:311:16:DS18B20_readByte	3
+../Core/Src/main.c:323:6:DS18B20_resetTemperature	1
+../Core/Src/main.c:329:7:DS18B20_readTemperature	1
+../Core/Src/main.c:350:6:Error_Handler	1
