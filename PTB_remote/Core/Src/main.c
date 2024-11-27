@@ -69,9 +69,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	int high_temp = 0;
-	int low_temp = 0;
-	int time = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -80,7 +77,11 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+  uint8_t high_temp = 0;
+  uint8_t low_temp = 0;
+  uint8_t time = 0;
+  uint8_t data[3] = {0, 0, 0};
+  uint8_t status = 0;
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -105,18 +106,36 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+	  /*if(HAL_UART_Receive(&huart1, &receivedSignal, 1, 1000) == HAL_OK){
+		  if (receivedSignal == 1) {
+		      // Activate the buzzer
+			  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_SET);
+			  HAL_Delay(1000);
+			  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_RESET);
+		  }
+	  }*/
+	  // Check if temperature is reached
+	  /*if(HAL_UART_Receive(&huart1, &status, 1, 1000) == HAL_OK){
+		  if (status == 1) {
+			  // Activate the buzzer
+		  	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_SET);
+		  	  HAL_Delay(1000);
+		  	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_RESET);
+		  }
+	  }*/
+
 	  if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET){ // White pressed
-		  high_temp = 80;
-		  low_temp = 70;
-		  time = 60;
+		  data[0] = 80;
+		  data[1] = 70;
+		  data[2] = 60;
 	  }
 
-	  // Buzzer test
 	  else if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_SET) //Green/yellow pressed
 	  {
-		  high_temp = 85;
-		  low_temp = 70;
-		  time = 60;
+		  data[0] = 85;
+		  data[1] = 70;
+		  data[2] = 60;
 
 		  // Buzzer code
 		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_SET);
@@ -126,23 +145,37 @@ int main(void)
 
 	  else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) == GPIO_PIN_SET) //Oolong pressed
 	  {
-	      high_temp = 85;
-	      low_temp = 70;
-	      time = 120;
+		  data[0] = 85;
+		  data[1] = 70;
+		  data[2] = 120;
 	  }
 	  else if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0) == GPIO_PIN_SET) // Black pressed
 	  {
-		  high_temp = 100;
-		  low_temp = 85;
-		  time = 180;
+		  data[0] = 100;
+		  data[1] = 85;
+		  data[2] = 180;
 	  }
 	  else if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1) == GPIO_PIN_SET) // Herbal pressed
 	  {
-		  high_temp = 100;
-		  low_temp = 85;
-		  time = 180;
+		  data[0] = 100;
+		  data[1] = 85;
+		  data[2] = 180;
 	  }
 
+	  // Transmit all variables to kettleside only if button pressed
+	  if(data[0] != 0 && data[1] != 0 && data[2] != 0){
+		  HAL_UART_Transmit(&huart1, data, sizeof(data), HAL_MAX_DELAY);
+		  if(HAL_UART_Receive(&huart1, &status, 1, HAL_MAX_DELAY) == HAL_OK){
+		  	if (status == 1) {
+		  		// Activate the buzzer
+		  		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_SET);
+		  		HAL_Delay(1000);
+		  		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_RESET);
+		  	}
+		  }
+	  }
+
+	  data[0] = 0; data[1] = 0; data[2] = 0; // data reset
   }
   /* USER CODE END 3 */
 }
@@ -215,7 +248,7 @@ static void MX_USART1_UART_Init(void)
   huart1.Init.Mode = UART_MODE_TX_RX;
   huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_HalfDuplex_Init(&huart1) != HAL_OK)
+  if (HAL_UART_Init(&huart1) != HAL_OK)
   {
     Error_Handler();
   }
